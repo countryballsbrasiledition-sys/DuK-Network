@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rede Social Simples</title>
+    <style>
+        :root {
+            --primary-color: #1877f2;
+            --bg-color: #f0f2f5;
+            --white: #ffffff;
+            --text-color: #050505;
+            --gray: #65676b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* Tela de Autenticação (Login/Cadastro) */
+        #auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--bg-color);
+        }
+
+        .auth-box {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+        .auth-box h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .auth-box input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #ccd0d5;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .auth-box button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .auth-box button:hover {
+            background-color: #166fe5;
+        }
+
+        .toggle-btn {
+            background: none;
+            color: var(--primary-color);
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Layout Principal da Rede Social */
+        #app-container {
+            display: none;
+        }
+
+        header {
+            background-color: var(--white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logout-btn {
+            background-color: #e4e6eb;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .main-content {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+
+        /* Caixa de Postagem */
+        .post-box {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .post-box textarea {
+            width: 100%;
+            border: none;
+            resize: none;
+            font-size: 16px;
+            outline: none;
+            padding: 5px;
+            height: 60px;
+        }
+
+        .post-box-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e4e6eb;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .file-upload-label {
+            cursor: pointer;
+            color: var(--gray);
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .post-box button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Estilo do Feed de Posts */
+        .post {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            padding: 15px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-author {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .post-text {
+            margin-bottom: 10px;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .post-actions {
+            display: flex;
+            border-top: 1px solid #e4e6eb;
+            padding-top: 8px;
+        }
+
+        .action-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-weight: bold;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            background-color: #f0f2f5;
+        }
+
+        .action-btn.liked {
+            color: var(--primary-color);
+        }
+
+        #file-input {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TELA DE LOGIN / CADASTRO -->
+    <div id="auth-container">
+        <div class="auth-box">
+            <h2 id="auth-title">Entrar na Rede</h2>
+            <form id="auth-form" onsubmit="handleAuth(event)">
+                <input type="text" id="username" placeholder="Nome de usuário" required>
+                <input type="password" id="password" placeholder="Senha" required>
+                <button type="submit" id="auth-btn">Entrar</button>
+            </form>
+            <button class="toggle-btn" onclick="toggleAuthMode()">Não tem conta? Cadastre-se</button>
+        </div>
+    </div>
+
+    <!-- TELA PRINCIPAL (REDE SOCIAL) -->
+    <div id="app-container">
+        <header>
+            <h1>RedeSocial</h1>
+            <div class="user-info">
+                <span id="logged-user-name"></span>
+                <button class="logout-btn" onclick="logout()">Sair</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Caixa de Criação de Post -->
+            <div class="post-box">
+                <textarea id="post-text" placeholder="No que você está pensando?"></textarea>
+                <div id="preview-container"></div>
+                <div class="post-box-footer">
+                    <label class="file-upload-label">
+                        📷 Adicionar Foto
+                        <input type="file" id="file-input" accept="image/*" onchange="previewImage(event)">
+                    </label>
+                    <button onclick="createPost()">Publicar</button>
+                </div>
+            </div>
+
+            <!-- Feed -->
+            <div id="feed"></div>
+        </div>
+    </div>
+
+    <script>
+        let isRegistering = false;
+        let currentUser = null;
+        let selectedImage = null;
+        let posts = JSON.parse(localStorage.getItem('social_posts')) || [];
+        let users = JSON.parse(localStorage.getItem('social_users')) || [];
+
+        // Alternar entre Login e Cadastro
+        function toggleAuthMode() {
+            isRegistering = !isRegistering;
+            document.getElementById('auth-title').innerText = isRegistering ? 'Criar Nova Conta' : 'Entrar na Rede';
+            document.getElementById('auth-btn').innerText = isRegistering ? 'Cadastrar' : 'Entrar';
+            document.querySelector('.toggle-btn').innerText = isRegistering ? 'Já tem uma conta? Faça login' : 'Não tem conta? Cadastre-se';
+        }
+
+        // Lógica de Autenticação simulada
+        function handleAuth(event) {
+            event.preventDefault();
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+
+            if (isRegistering) {
+                const userExists = users.some(u => u.username === user);
+                if (userExists) {
+                    alert('Este usuário já existe!');
+                    return;
+                }
+                users.push({ username: user, password: pass });
+                localStorage.setItem('social_users', JSON.stringify(users));
+                alert('Conta criada com sucesso! Faça login.');
+                toggleAuthMode();
+            } else {
+                const validUser = users.find(u => u.username === user && u.password === pass);
+                if (!validUser && (user !== "admin" || pass !== "123")) { // Conta padrão opcional
+                    alert('Usuário ou senha incorretos!');
+                    return;
+                }
+                currentUser = user;
+                document.getElementById('logged-user-name').innerText = currentUser;
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
+                renderFeed();
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('auth-container').style.display = 'flex';
+            document.getElementById('app-container').style.display = 'none';
+            document.getElementById('auth-form').reset();
+        }
+
+        // Pré-visualizar imagem selecionada
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedImage = e.target.result;
+                    document.getElementById('preview-container').innerHTML = `
+                        <img src="${selectedImage}" style="max-height: 100px; border-radius: 4px; margin-bottom: 10px;">
+                    `;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Criar Postagem
+        function createPost() {
+            const text = document.getElementById('post-text').value.trim();
+            if (!text && !selectedImage) {
+                alert('Escreva algo ou adicione uma foto para publicar!');
+                return;
+            }
+
+            const newPost = {
+                id: Date.now(),
+                author: currentUser,
+                text: text,
+                image: selectedImage,
+                likes: 0,
+                likedBy: []
+            };
+
+            posts.unshift(newPost);
+            saveAndRender();
+
+            // Limpar campos
+            document.getElementById('post-text').value = '';
+            document.getElementById('file-input').value = '';
+            document.getElementById('preview-container').innerHTML = '';
+            selectedImage = null;
+        }
+
+        // Curtir / Reagir no Post
+        function toggleLike(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                const index = post.likedBy.indexOf(currentUser);
+                if (index > -1) {
+                    post.likedBy.splice(index, 1);
+                    post.likes--;
+                } else {
+                    post.likedBy.push(currentUser);
+                    post.likes++;
+                }
+                saveAndRender();
+            }
+        }
+
+        function saveAndRender() {
+            localStorage.setItem('social_posts', JSON.stringify(posts));
+            renderFeed();
+        }
+
+        // Renderizar o Feed na tela
+        function renderFeed() {
+            const feed = document.getElementById('feed');
+            feed.innerHTML = '';
+
+            if (posts.length === 0) {
+                feed.innerHTML = '<p style="text-align: center; color: gray;">Nenhuma publicação ainda. Seja o primeiro a postar!</p>';
+                return;
+            }
+
+            posts.forEach(post => {
+                const isLiked = post.likedBy.includes(currentUser);
+                const postElement = document.createElement('div');
+                postElement.className = 'post';
+                postElement.innerHTML = `
+                    <div class="post-header">
+                        <span class="post-author">👤 ${post.author}</span>
+                    </div>
+                    ${post.text ? `<div class="post-text">${post.text}</div>` : ''}
+                    ${post.image ? `<img src="${post.image}" class="post-image">` : ''}
+                    <div class="post-actions">
+                        <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+                            👍 Curtir (${post.likes})
+                        </button>
+                    </div>
+                `;
+                feed.appendChild(postElement);
+            });
+        }
+    </script>
+</body>
+</html>
